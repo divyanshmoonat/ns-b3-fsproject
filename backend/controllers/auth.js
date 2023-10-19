@@ -1,4 +1,7 @@
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
+const JWT_SECRET_KEY = "myjwtsecretkey";
 
 const User = require("../models/User");
 
@@ -19,9 +22,21 @@ const login = async (req, res) => {
         });
     }
 
+    const now = Date.now();
+
+    const payload = {
+        iat: now,
+        exp: now + 3600,
+        _id: user._id,
+        email: user.email
+    };
+
+    const token = jwt.sign(payload, JWT_SECRET_KEY);
+
     res.json({
         success: true,
-        message: "Login successful"
+        message: "Login successful",
+        token: token
     });
 };
 
